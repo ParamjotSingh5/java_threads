@@ -7,6 +7,7 @@ public class InterruptLongRunningTask {
         BigInteger exponent = new BigInteger("1000000");
 
         Thread longComputationThread = new Thread(new LongComputationThread(base, exponent));
+        longComputationThread.setDaemon(true);
         longComputationThread.start();
 
         try {
@@ -31,10 +32,6 @@ public class InterruptLongRunningTask {
 
 
                 for(BigInteger i= BigInteger.ZERO; i.compareTo(exponent) != 0; i=i.add(BigInteger.ONE)) {
-                    if (Thread.currentThread().isInterrupted()) {
-                        System.out.println("Thread interrupted, stopping computation.");
-                        return BigInteger.ZERO;
-                    }
                     result = result.multiply(base);
                 }
 
