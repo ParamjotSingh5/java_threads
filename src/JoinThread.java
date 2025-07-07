@@ -22,7 +22,7 @@ public class JoinThread {
             try
             {
                 factorialThread.join(2000); // Wait for up to 2 seconds for the thread to finish
-                System.out.println("Thread " + factorialThread.getName() + " has finished execution.");
+                System.out.println("Thread " + factorialThread.getName() + " has finished wait of threshold time.");
             } catch (InterruptedException e) {
                 System.out.println("Thread interrupted: " + e.getMessage());
             }
