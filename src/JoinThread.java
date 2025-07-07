@@ -11,6 +11,7 @@ public class JoinThread {
 
         for (Long inputNumber : inputNumbers) {
             FactorialThread factorialThread = new FactorialThread(inputNumber.intValue());
+            factorialThread.setDaemon(true);
             threads.add(factorialThread);
         }
 
