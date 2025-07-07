@@ -5,7 +5,7 @@ import java.util.List;
 public class JoinThread {
 
     public static void main(String[] args) {
-        List<Long> inputNumbers = List.of(5L, 10L, 20L, 30L, 50L);
+        List<Long> inputNumbers = List.of(50000000L, 10L, 20L, 30L, 50L);
 
         List<FactorialThread> threads = new ArrayList<>();
 
@@ -21,7 +21,7 @@ public class JoinThread {
         for (FactorialThread factorialThread : threads) {
             try
             {
-                factorialThread.join(); // Wait for each thread to finish
+                factorialThread.join(2000); // Wait for up to 2 seconds for the thread to finish
                 System.out.println("Thread " + factorialThread.getName() + " has finished execution.");
             } catch (InterruptedException e) {
                 System.out.println("Thread interrupted: " + e.getMessage());
