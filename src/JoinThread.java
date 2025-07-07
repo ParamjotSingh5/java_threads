@@ -19,6 +19,16 @@ public class JoinThread {
         }
 
         for (FactorialThread factorialThread : threads) {
+            try
+            {
+                factorialThread.join(); // Wait for each thread to finish
+                System.out.println("Thread " + factorialThread.getName() + " has finished execution.");
+            } catch (InterruptedException e) {
+                System.out.println("Thread interrupted: " + e.getMessage());
+            }
+        }
+
+        for (FactorialThread factorialThread : threads) {
             if(factorialThread.isFinished()) {
                 System.out.println("Factorial of " + factorialThread.getInputNumber() + " is: " + factorialThread.getResult());
             } else {
