@@ -20,7 +20,7 @@ public class Main {
         int rgb = 0;
 
         rgb |= blue;
-        rgb |= green << 8;
+        rgb |= green << 8; // shift green 8 bits to the left to place it in the correct position
         rgb |= red << 16;
 
         rgb |= 0xFF000000;
@@ -29,7 +29,7 @@ public class Main {
     }
 
     public static int getRed(int rgb) {
-        return (rgb & 0x00FF0000) >> 16;
+        return (rgb & 0x00FF0000) >> 16; // get a full value of 0x00red0000, bcz x AND 1 returns x. >> 16 shifts it to the right
     }
 
     public static int getGreen(int rgb) {
