@@ -16,8 +16,16 @@ public class Main {
         BufferedImage resultImage = new BufferedImage(originalImage.getWidth(), originalImage.getHeight(), BufferedImage.TYPE_INT_RGB);
 
         long startTime = System.currentTimeMillis();
-        recolorSingleThreaded(originalImage, resultImage);
 
+        //Performed these tests on my laptop with an 16 core CPU
+
+        recolorSingleThreaded(originalImage, resultImage); // took 388 milliseconds with 1 thread
+
+        //recolorMultiThreaded(originalImage, resultImage, 4); // took 3 milliseconds with 4 threads
+
+        //recolorMultiThreaded(originalImage, resultImage, 16); // took 3 milliseconds with 16 threads
+
+        //recolorMultiThreaded(originalImage, resultImage, 32); // took 10 milliseconds with 32 threads
 
         long endTime = System.currentTimeMillis();
 
@@ -28,6 +36,24 @@ public class Main {
 
         System.out.println(duration);
 
+    }
+
+    public static void recolorMultiThreaded(BufferedImage originalImage, BufferedImage resultImage, int numberOfThreads) {
+        int width = originalImage.getWidth();
+        int height = originalImage.getHeight();
+        int segmentHeight = height / numberOfThreads;
+
+        Thread[] threads = new Thread[numberOfThreads];
+
+        for (int i = 0; i < numberOfThreads; i++) {
+            final int threadIndex = i;
+            threads[i] = new Thread(() -> {
+                int topCorner = threadIndex * segmentHeight;
+
+                recolorImage(originalImage, resultImage, 0, topCorner, width, segmentHeight);
+            });
+            threads[i].start();
+        }
     }
 
     public static void recolorSingleThreaded(BufferedImage originalImage, BufferedImage resultImage) {
