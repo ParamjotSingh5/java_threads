@@ -54,6 +54,14 @@ public class Main {
             });
             threads[i].start();
         }
+
+        for (Thread thread : threads) {
+            try {
+                thread.join(); // Wait for all threads to finish
+            } catch (InterruptedException e) {
+                System.err.println("Thread interrupted: " + e.getMessage());
+            }
+        }
     }
 
     public static void recolorSingleThreaded(BufferedImage originalImage, BufferedImage resultImage) {
