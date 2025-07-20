@@ -10,9 +10,9 @@ public class Main {
         Thread decrementingThread = new DecrementingThread(inventoryCounter);
 
         incrementingThread.start();
-        incrementingThread.join();
-
         decrementingThread.start();
+
+        incrementingThread.join();
         decrementingThread.join();
 
         System.out.println("Final inventory count: " + inventoryCounter.getCount());
