@@ -57,7 +57,10 @@ public class Main {
         }
 
         public void increment() {
-            count++;
+            count++; // This is not an atomic operation, it performs 3 separate operations a read, increment, and write.
+            // If another threads access this resource in between these operations, it can lead data discrepancies.
+
+            // Atomic operation: An operation or a set of operations that are completed at once, not intermediate steps, all or nothing.
         }
 
         public void decrement() {
