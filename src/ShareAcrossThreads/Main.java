@@ -56,18 +56,18 @@ public class Main {
             this.count = initialCount;
         }
 
-        public void increment() {
+        public synchronized void increment() {
             count++; // This is not an atomic operation, it performs 3 separate operations a read, increment, and write.
             // If another threads access this resource in between these operations, it can lead data discrepancies.
 
             // Atomic operation: An operation or a set of operations that are completed at once, not intermediate steps, all or nothing.
         }
 
-        public void decrement() {
+        public synchronized void decrement() {
             count--;
         }
 
-        public int getCount() {
+        public synchronized int getCount() {
             return count;
         }
     }
