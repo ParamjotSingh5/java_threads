@@ -1,5 +1,7 @@
 package ShareAcrossThreads;
 
+import java.util.Objects;
+
 public class Main {
     public static void main(String[] args) throws InterruptedException {
 
@@ -56,19 +58,27 @@ public class Main {
             this.count = initialCount;
         }
 
-        public synchronized void increment() {
-            count++; // This is not an atomic operation, it performs 3 separate operations a read, increment, and write.
-            // If another threads access this resource in between these operations, it can lead data discrepancies.
+        final Object lock = new Object();
 
-            // Atomic operation: An operation or a set of operations that are completed at once, not intermediate steps, all or nothing.
+        public void increment() {
+            synchronized (lock) {
+                count++; // This is not an atomic operation, it performs 3 separate operations a read, increment, and write.
+                // If another threads access this resource in between these operations, it can lead data discrepancies.
+
+                // Atomic operation: An operation or a set of operations that are completed at once, not intermediate steps, all or nothing.
+            }
         }
 
-        public synchronized void decrement() {
-            count--;
+        public void decrement() {
+            synchronized (lock) {
+                count--; // Similar to increment, this is not atomic and can lead
+            }
         }
 
-        public synchronized int getCount() {
-            return count;
+        public int getCount() {
+            synchronized (lock) {
+                return count; // This ensures that the read operation is also synchronized, preventing data inconsistencies.
+            }
         }
     }
 }
