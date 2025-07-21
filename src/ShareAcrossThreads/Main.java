@@ -61,7 +61,7 @@ public class Main {
         final Object lock = new Object();
 
         public void increment() {
-            synchronized (lock) {
+            synchronized (lock) { // achieving atomicity for a number of operations by using synchronized block.
                 count++; // This is not an atomic operation, it performs 3 separate operations a read, increment, and write.
                 // If another threads access this resource in between these operations, it can lead data discrepancies.
 
