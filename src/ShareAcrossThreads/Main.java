@@ -76,9 +76,45 @@ public class Main {
         }
 
         public int getCount() {
-            synchronized (lock) {
-                return count; // This ensures that the read operation is also synchronized, preventing data inconsistencies.
+            return count;
+        }
+    }
+
+    public static class MinMaxMetrics {
+
+        private volatile long minValue; // make these variables volatile to prevent from instruction reordering.
+        private volatile long maxValue;
+
+        /**
+         * Initializes all member variables
+         */
+        public MinMaxMetrics() {
+            this.maxValue = Long.MIN_VALUE;
+            this.minValue = Long.MAX_VALUE;
+        }
+
+        /**
+         * Adds a new sample to our metrics.
+         */
+        public void addSample(long newSample) {
+            synchronized (this) { // make this operation atomic in nature.
+                this.minValue = Math.min(newSample, this.minValue);
+                this.maxValue = Math.max(newSample, this.maxValue);
             }
+        }
+
+        /**
+         * Returns the smallest sample we've seen so far.
+         */
+        public long getMin() {
+            return this.minValue;
+        }
+
+        /**
+         * Returns the biggest sample we've seen so far.
+         */
+        public long getMax() {
+            return this.maxValue;
         }
     }
 }
