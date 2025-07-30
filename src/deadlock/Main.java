@@ -64,10 +64,10 @@ public class Main {
         private final Object roadB = new Object();
 
         public void takeRoadA(){
-            synchronized (roadA){
+            synchronized (roadB){
                 System.out.printf("Road A is locked by %s\n", Thread.currentThread().getName());
 
-                synchronized (roadB){ // Acquiring lock on road B after acquiring lock on road A, so that Train-A can pass through intersection.
+                synchronized (roadA){ // Acquiring lock on road B after acquiring lock on road A, so that Train-A can pass through intersection.
                     // If another thread "Train-B" has already acquired lock on road B, then Train-A thread will wait indefinitely for road B to be released, leading to a deadlock.
                     // This is a deadlock scenario because both trains are waiting for each other to release the locks on their respective roads.
                     System.out.println("Train is passing through road A");
