@@ -60,25 +60,27 @@ public class Main extends Application {
         AnimationTimer animationTimer = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if (pricesContainer.getLock().tryLock()) {
-                    try {
-                        Label bitcoinLabel = cryptoLabels.get("BTC");
-                        bitcoinLabel.setText(String.valueOf(pricesContainer.getBitCoinPrice()));
+                pricesContainer.getLock().lock(); // This will block the UI thread until the background thread releases the lock.
+                // We need to make sure that we read the prices from the PricesContainer only when the background thread is not updating them.
+                // Otherwise, blocking UI thread will cause the application to freeze.
+                // This is case where we use reentrant lock, dodge the blocking of UI threads while PriceContainer object is locked.
+                try {
+                    Label bitcoinLabel = cryptoLabels.get("BTC");
+                    bitcoinLabel.setText(String.valueOf(pricesContainer.getBitCoinPrice()));
 
-                        Label etherLabel = cryptoLabels.get("ETH");
-                        etherLabel.setText(String.valueOf(pricesContainer.getEthereumPrice()));
+                    Label etherLabel = cryptoLabels.get("ETH");
+                    etherLabel.setText(String.valueOf(pricesContainer.getEthereumPrice()));
 
-                        Label litecoinLabel = cryptoLabels.get("LTC");
-                        litecoinLabel.setText(String.valueOf(pricesContainer.getLiteCoinPrice()));
+                    Label litecoinLabel = cryptoLabels.get("LTC");
+                    litecoinLabel.setText(String.valueOf(pricesContainer.getLiteCoinPrice()));
 
-                        Label bitcoinCashLabel = cryptoLabels.get("BCH");
-                        bitcoinCashLabel.setText(String.valueOf(pricesContainer.getDogeCoinPrice()));
+                    Label bitcoinCashLabel = cryptoLabels.get("BCH");
+                    bitcoinCashLabel.setText(String.valueOf(pricesContainer.getDogeCoinPrice()));
 
-                        Label rippleLabel = cryptoLabels.get("XRP");
-                        rippleLabel.setText(String.valueOf(pricesContainer.getRipplePrice()));
-                    } finally {
-                        pricesContainer.getLock().unlock();
-                    }
+                    Label rippleLabel = cryptoLabels.get("XRP");
+                    rippleLabel.setText(String.valueOf(pricesContainer.getRipplePrice()));
+                } finally {
+                    pricesContainer.getLock().unlock();
                 }
             }
         };
@@ -239,14 +241,9 @@ public class Main extends Application {
                 pricesContainer.getLock().lock();
                 // We need make sure that update of prices is atomic operation,
                 // so we use lock to ensure that no other thread can read or write to pricesContainer while we are updating it.
-                // This is a reentrant lock, so if the same thread tries to acquire the lock again, it will not block.
-                // This is useful in case we have a UI thread that needs to read the prices while
-                // the background thread is updating them.
-                // If we used a regular lock, the UI thread would block until the background thread releases
-                // the lock, which would make the UI unresponsive.
                 try {
                     try {
-                        Thread.sleep(5000); // Simulate fetching prices from a remote server
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
