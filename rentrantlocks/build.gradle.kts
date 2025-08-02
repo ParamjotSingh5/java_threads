@@ -27,7 +27,7 @@ tasks.withType<JavaCompile> {
 
 application {
     mainModule.set("com.example.rentrantlocks")
-    mainClass.set("com.example.rentrantlocks.HelloApplication")
+    mainClass.set("com.example.rentrantlocks.Main")
 }
 
 javafx {

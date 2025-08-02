@@ -27,7 +27,7 @@ import java.util.concurrent.locks.ReentrantLock;
 // and a background thread that will fetch the prices of assets from a exchange remote server (simulation via thread.sleep method).
 // The background thread will update the prices in a shared PricesContainer object, and the UI thread will read the prices from this object.
 
-public class HelloApplication extends Application {
+public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
     }
@@ -245,6 +245,11 @@ public class HelloApplication extends Application {
                 // If we used a regular lock, the UI thread would block until the background thread releases
                 // the lock, which would make the UI unresponsive.
                 try {
+                    try {
+                        Thread.sleep(5000); // Simulate fetching prices from a remote server
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     pricesContainer.setBitCoinPrice(random.nextDouble() * 10000);
                     pricesContainer.setEthereumPrice(random.nextDouble() * 1000);
                     pricesContainer.setLiteCoinPrice(random.nextDouble() * 500);
@@ -255,7 +260,7 @@ public class HelloApplication extends Application {
                 }
 
                 try {
-                    Thread.sleep(1000); // Simulate fetching prices from a remote server
+                    Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
