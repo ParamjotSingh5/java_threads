@@ -64,8 +64,8 @@ public class Main {
         private TreeMap<Integer, Integer> priceToCountMap = new TreeMap<>();
         private ReentrantReadWriteLock reentrantReadWriteLock = new ReentrantReadWriteLock();
         private Lock readLock = reentrantReadWriteLock.readLock();
-        private Lock writeLock = reentrantReadWriteLock.writeLock();
-        private Lock lock = new ReentrantLock();
+        private Lock writeLock = reentrantReadWriteLock.writeLock(); // Takes almost 800 ms to run the code with this read/write lock
+        private Lock lock = new ReentrantLock(); // Takes almost 2 seconds to run the code with this lock
 
         public int getNumberOfItemsInPriceRange(int lowerBound, int upperBound) {
             //lock.lock();
