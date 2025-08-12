@@ -19,9 +19,13 @@ public class Main {
     private void produce() {
         while (true) {
             try{
+                System.out.println("Acquiring full semaphore");
                 full.acquire();
+                System.out.println("Producing item, current buffer size: " + buffer);
                 buffer++;
+                System.out.println("Releasing empty semaphore");
                 empty.release();
+                System.out.println("Item produced, new buffer size: " + buffer);
             }
             catch (InterruptedException e){
                 System.out.println("Producer interrupted: " + e.getMessage());
@@ -32,9 +36,13 @@ public class Main {
     private void consume()  {
         try{
             while (true) {
+                System.out.println("Acquiring empty semaphore");
                 empty.acquire();
+                System.out.println("Consuming item, current buffer size: " + buffer);
                 buffer--;
+                System.out.println("Releasing full semaphore");
                 full.release();
+                System.out.println("Item consumed, new buffer size: " + buffer);
             }
         }
         catch (InterruptedException e){
