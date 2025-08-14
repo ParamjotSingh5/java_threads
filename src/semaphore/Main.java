@@ -1,25 +1,40 @@
 package semaphore;
 
+import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Main {
+    static int CAPACITY = 10;
     Semaphore full = new Semaphore(0);
-    Semaphore empty = new Semaphore(1);
-    int buffer = 1;
+    Semaphore empty = new Semaphore(CAPACITY);
+    Queue<Integer> queue = new ArrayBlockingQueue<>(CAPACITY);
+    Lock lock = new ReentrantLock();
 
     public static void main(String[] args) throws InterruptedException {
         Main main = new Main();
-        Thread producer = new Thread(main::produce);
-        Thread consumer = new Thread(main::consume);
 
-        consumer.start();
-        producer.start();
+        System.out.println("Starting...");
+
+        List<Thread> producerThreads = new ArrayList<>();
+        for (int i = 0; i < CAPACITY; i++) {
+            producerThreads.add(new Thread(main::produce));
+        }
+
+        List<Thread> consumerThreads = new ArrayList<>();
+        for (int i = 0; i< CAPACITY; i++){
+            consumerThreads.add( new Thread(main::consume));
+        }
+
+        consumerThreads.forEach(Thread::start);
+        producerThreads.forEach(Thread::start);
     }
 
     private void produce() {
         while (true) {
             try{
-                System.out.println("Acquiring full semaphore");
                 full.acquire();// In first iteration, this will block until the consumer has consumed an item
                 // This ensures that we do not produce more items than the buffer can hold
                 // In subsequent iterations, it will block until the consumer has consumed an item
@@ -27,11 +42,11 @@ public class Main {
                 // This allows the producer to produce an item only when there is space in the buffer
                 // This is a classic producer-consumer problem where the producer waits for the consumer to consume
                 // an item before producing a new one
-                System.out.println("Producing item, current buffer size: " + buffer);
-                buffer++;
-                System.out.println("Releasing empty semaphore");
+                lock.lock();
+                queue.offer(new Random().nextInt(CAPACITY));
+                System.out.println("Produced new item, current queue: " + queue);
+                lock.unlock();
                 empty.release();
-                System.out.println("Item produced, new buffer size: " + buffer);
             }
             catch (InterruptedException e){
                 System.out.println("Producer interrupted: " + e.getMessage());
@@ -42,13 +57,12 @@ public class Main {
     private void consume()  {
         try{
             while (true) {
-                System.out.println("Acquiring empty semaphore");
                 empty.acquire();
-                System.out.println("Consuming item, current buffer size: " + buffer);
-                buffer--;
-                System.out.println("Releasing full semaphore");
+                lock.lock();
+                System.out.println("Pooled item: " + queue.poll());
+                System.out.println("Queue: " + queue);
+                lock.unlock();
                 full.release();
-                System.out.println("Item consumed, new buffer size: " + buffer);
             }
         }
         catch (InterruptedException e){
