@@ -8,9 +8,11 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Main {
     static int CAPACITY = 10;
-    Semaphore full = new Semaphore(0);
-    Semaphore empty = new Semaphore(CAPACITY);
-    Queue<Integer> queue = new ArrayBlockingQueue<>(CAPACITY);
+    Semaphore producerPermits = new Semaphore(0);
+    Semaphore consumerPermits = new Semaphore(CAPACITY);
+    Queue<Integer> queue = new ArrayBlockingQueue<>(CAPACITY); // We have limited buffer of in stock items, but the producer does not have any loop breaker,
+    // The producer run is permitted only when, a consumer have acquired and consumed an items from queue. In this way queue is not overwhelmed with tasks,
+    // and we are blocking the producers to block more task as of now.
     Lock lock = new ReentrantLock();
 
     public static void main(String[] args) throws InterruptedException {
@@ -35,7 +37,7 @@ public class Main {
     private void produce() {
         while (true) {
             try{
-                full.acquire();// In first iteration, this will block until the consumer has consumed an item
+                producerPermits.acquire();// In first iteration, this will block until the consumer has consumed an item
                 // This ensures that we do not produce more items than the buffer can hold
                 // In subsequent iterations, it will block until the consumer has consumed an item
                 // and released the full semaphore
@@ -46,7 +48,7 @@ public class Main {
                 queue.offer(new Random().nextInt(CAPACITY));
                 System.out.println("Produced new item, current queue: " + queue);
                 lock.unlock();
-                empty.release();
+                consumerPermits.release();
             }
             catch (InterruptedException e){
                 System.out.println("Producer interrupted: " + e.getMessage());
@@ -57,12 +59,12 @@ public class Main {
     private void consume()  {
         try{
             while (true) {
-                empty.acquire();
+                consumerPermits.acquire();
                 lock.lock();
                 System.out.println("Pooled item: " + queue.poll());
                 System.out.println("Queue: " + queue);
                 lock.unlock();
-                full.release();
+                producerPermits.release();
             }
         }
         catch (InterruptedException e){
