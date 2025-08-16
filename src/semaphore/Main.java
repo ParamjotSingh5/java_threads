@@ -9,7 +9,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Main {
     static int CAPACITY = 10;
     Semaphore producerPermits = new Semaphore(0);
-    Semaphore consumerPermits = new Semaphore(CAPACITY);
+    Semaphore consumerPermits = new Semaphore(1); // Releasing a permit eventually allows a blocked threads to acquire one.
     Queue<Integer> queue = new ArrayBlockingQueue<>(CAPACITY); // We have limited buffer of in stock items, but the producer does not have any loop breaker,
     // The producer run is permitted only when, a consumer have acquired and consumed an items from queue. In this way queue is not overwhelmed with tasks,
     // and we are blocking the producers to block more task as of now.
@@ -45,7 +45,7 @@ public class Main {
                 // This is a classic producer-consumer problem where the producer waits for the consumer to consume
                 // an item before producing a new one
                 lock.lock();
-                queue.offer(new Random().nextInt(CAPACITY));
+                queue.add(new Random().nextInt(CAPACITY));
                 System.out.println("Produced new item, current queue: " + queue);
                 lock.unlock();
                 consumerPermits.release();
