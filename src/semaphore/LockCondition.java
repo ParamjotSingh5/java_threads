@@ -30,8 +30,8 @@ public class LockCondition {
             @Override
             public void run() {
                 while(!flag) {
-                    boolean usernameFlag = random.nextInt(100) > 50;
-                    boolean passwordFlag = random.nextInt(100) > 50;
+                    boolean usernameFlag = random.nextInt(100) > 80;
+                    boolean passwordFlag = random.nextInt(100) > 80;
 
                     lock.lock();
 
