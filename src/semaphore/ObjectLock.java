@@ -20,7 +20,7 @@ public class ObjectLock {
         workerThread.start();
 
         System.out.println("Main thread waiting for completion...");
-        objectLock.waitForCompletion();
+        //objectLock.waitForCompletion();
         System.out.println("Main thread resumed after completion.");
     }
 
