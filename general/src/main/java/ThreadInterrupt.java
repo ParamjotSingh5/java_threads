@@ -1,5 +1,3 @@
-import java.math.BigInteger;
-
 public class ThreadInterrupt {
 
     public static void main(String[] args) {

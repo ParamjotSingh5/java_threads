@@ -27,3 +27,11 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+.idea
+general/gradlew.bat
+general/gradlew
+general/gradle
+general/.gradle
+rentrantlocks/.gradle
+rentrantlocks/gradlew
+rentrantlocks/gradlew.bat
