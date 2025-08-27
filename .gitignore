@@ -35,3 +35,4 @@ general/.gradle
 rentrantlocks/.gradle
 rentrantlocks/gradlew
 rentrantlocks/gradlew.bat
+general/build
