@@ -7,13 +7,13 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Scanner;
-import java.util.StringJoiner;
 
 public class MainApplication {
 
     private static final String INPUT_FILE = "./out/matricesMultiplier/matrices.txt";
     private static final String OUTPUT_FILE = "./out/matricesMultiplier/matrices_results.txt";
     private static final int N = 10;
+    private static final int QUEUE_CAPACITY = 5;
 
     public static void main(String[] args) throws IOException {
         ThreadSafeQueue threadSafeQueue = new ThreadSafeQueue();
@@ -135,16 +135,25 @@ public class MainApplication {
         private boolean isTerminate = false;
 
         public synchronized void add(MatricesPair matricesPair) {
+
+            while(queue.size() >= QUEUE_CAPACITY){
+                try {
+                    this.wait(); // Halt addition and release the lock until notified. This acts as a backpressure mechanism onto producer, to hold down horses while
+                    // consumer is catching up.
+                } catch (InterruptedException ignored) {
+                }
+            }
+
             queue.add(matricesPair);
             isEmpty = false;
-            this.notifyAll(); // notify the waiting threads to recheck the condition
+            this.notifyAll(); // Notify the waiting threads to recheck the condition.
         }
 
         public synchronized MatricesPair remove(){
             MatricesPair matricesPair;
             while(isEmpty && !isTerminate) {
                 try {
-                    this.wait();
+                    this.wait(); // Halt removal and release the lock until notified.
                 } catch (InterruptedException ignored) {
                 }
             }
@@ -160,6 +169,10 @@ public class MainApplication {
             System.out.println("queue size " + queue.size());
 
             matricesPair = queue.remove();
+
+            if(queue.size() == QUEUE_CAPACITY - 1) {
+                this.notifyAll(); // Notify the waiting threads to recheck the condition.
+            }
 
             return matricesPair;
         }
