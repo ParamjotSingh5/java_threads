@@ -54,20 +54,18 @@ public class Main {
     }
 
     public static class InventoryCounter {
-        private  int items =0 ;
+        private final AtomicInteger items = new AtomicInteger(0);
 
         public void increment() {
-            items++;
-            System.out.printf("Incremented, current items: %d%n", items);
+            items.incrementAndGet();
         }
 
         public void decrement() {
-            items--;
-            System.out.printf("Decremented, current items: %d%n", items);
+            items.decrementAndGet();
         }
 
         public int getItems() {
-            return items;
+            return items.get();
         }
     }
 
