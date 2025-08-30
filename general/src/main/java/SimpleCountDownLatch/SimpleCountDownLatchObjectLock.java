@@ -1,0 +1,50 @@
+package SimpleCountDownLatch;
+
+public class SimpleCountDownLatchObjectLock {
+
+    private int count;
+
+    public SimpleCountDownLatchObjectLock(int count) {
+        this.count = count;
+        if (count < 0) {
+            throw new IllegalArgumentException("count cannot be negative");
+        }
+    }
+
+    /**
+     * Causes the current thread to wait until the latch has counted down to zero.
+     * If the current count is already zero then this method returns immediately.
+     */
+    public synchronized void await() throws InterruptedException {
+        while(this.count != 0){
+            this.wait();
+        }
+
+        return;
+    }
+
+    /**
+     *  Decrements the count of the latch, releasing all waiting threads when the count reaches zero.
+     *  If the current count already equals zero then nothing happens.
+     */
+    public synchronized void countDown() {
+
+        if(this.count == 0){
+            return;
+        }
+
+        this.count = this.count - 1;
+
+        if(this.count == 0){
+            this.notifyAll();
+        }
+
+    }
+
+    /**
+     * Returns the current count.
+     */
+    public synchronized int getCount() {
+        return this.count;
+    }
+}
