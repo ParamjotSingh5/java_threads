@@ -3,7 +3,7 @@ package SimpleCountDownLatch;
 public class CountDownLatchExample {
     public static void main(String[] args) throws InterruptedException {
         int workerCount = 3;
-        SimpleCountDownLatchObjectLock latch = new SimpleCountDownLatchObjectLock(workerCount);
+        SimpleCountDownLatchConditionLock latch = new SimpleCountDownLatchConditionLock(workerCount);
 
         for (int i = 1; i <= workerCount; i++) {
             Thread worker = new Thread(new Worker(latch, i));
@@ -15,7 +15,7 @@ public class CountDownLatchExample {
         System.out.println("All workers finished. Main thread continues!");
     }
 
-    record Worker(SimpleCountDownLatchObjectLock latch, int id) implements Runnable {
+    record Worker(SimpleCountDownLatchConditionLock latch, int id) implements Runnable {
 
         @Override
             public void run() {

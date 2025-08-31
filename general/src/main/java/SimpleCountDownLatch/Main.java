@@ -2,7 +2,7 @@ package SimpleCountDownLatch;
 
 public class Main {
     public static void main(String[] args) {
-        SimpleCountDownLatchObjectLock latch = new SimpleCountDownLatchObjectLock(3);
+        SimpleCountDownLatchConditionLock latch = new SimpleCountDownLatchConditionLock(3);
 
         Runnable task = () -> {
             try {
