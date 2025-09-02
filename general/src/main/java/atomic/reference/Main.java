@@ -3,9 +3,8 @@ package atomic.reference;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.concurrent.locks.LockSupport;
 
 public class Main {
@@ -48,42 +47,36 @@ public class Main {
     // Classic Treiber stack, also called optimistic concurrency.
     public static class LockFreeStack<T> implements Stack<T> {
         private final AtomicReference<StackNode<T>> head = new AtomicReference<>();
-        private final AtomicLong stepCounter = new AtomicLong(0);
+        private final LongAdder stepCounter = new LongAdder();
 
         public void push(T value) {
-            StackNode<T> newHeadNode = new StackNode<>(value);
-
-            while (true) {
+            for (int spins = 0; ; spins = backoff(spins)) {
                 StackNode<T> currentHeadNode = head.get();
-                newHeadNode.next = currentHeadNode;
-                if (head.compareAndSet(currentHeadNode, newHeadNode)) {
-                    break;
-                } else {
-                    LockSupport.parkNanos(1);
+                new StackNode<>(value).next = currentHeadNode;
+                if (head.compareAndSet(currentHeadNode, new StackNode<T>(value))) {
+                    stepCounter.increment();
+                    return;
                 }
+                stepCounter.increment();
             }
-            stepCounter.incrementAndGet();
         }
 
         public T pop() {
-            StackNode<T> currentHeadNode = head.get();
-            StackNode<T> newHeadNode;
-
-            while (currentHeadNode != null) {
-                newHeadNode = currentHeadNode.next;
-                if (head.compareAndSet(currentHeadNode, newHeadNode)) {
-                    break;
-                } else {
-                    LockSupport.parkNanos(1);
-                    currentHeadNode = head.get();
+            for (int spins = 0; ; spins = backoff(spins)) {
+                StackNode<T> currentHeadNode = head.get();
+                if (currentHeadNode == null) {
+                    stepCounter.increment();
+                    return null;
+                }
+                if (head.compareAndSet(currentHeadNode, currentHeadNode.next)) {
+                    stepCounter.increment();
+                    return currentHeadNode.value;
                 }
             }
-            stepCounter.incrementAndGet();
-            return currentHeadNode != null ? currentHeadNode.value : null;
         }
 
         public Long getCounter() {
-            return stepCounter.get();
+            return stepCounter.longValue();
         }
 
 
