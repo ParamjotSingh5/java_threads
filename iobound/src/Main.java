@@ -4,7 +4,7 @@ import java.util.concurrent.ThreadFactory;
 
 public class Main {
 
-    private static final int NUMBER_OF_TASKS = 1000;
+    private static final int NUMBER_OF_TASKS = 20000;
 
     public static void main(String[] args) {
         System.out.println("Starting IO-bound tasks...");
