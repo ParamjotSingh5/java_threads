@@ -15,7 +15,7 @@ public class Main {
     }
 
     private static void performTasks(){
-        try(ExecutorService executorService = Executors.newCachedThreadPool()){
+        try(ExecutorService executorService = Executors.newFixedThreadPool(1000)){
             for (int i = 0; i < NUMBER_OF_TASKS; i++) {
                 executorService.submit(Main::blockingIOOperation);
             }
