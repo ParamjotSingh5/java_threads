@@ -33,7 +33,7 @@ public class Main {
                //  - As soon a there is a blocking operation, OS unschedules the thread
                //  - Too many threads and frequent blocking calls lead to CPU being busy running OS code that manages threads
                //  - Context switch is expensive, it takes time to save and restore thread state
-               // Threadshing: A situation where the CPU is busy switching between threads instead of executing actual tasks.
+               // Thrashing: A situation where the CPU is busy switching between threads instead of executing actual tasks.
            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
