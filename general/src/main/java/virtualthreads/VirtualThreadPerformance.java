@@ -16,7 +16,7 @@ public class VirtualThreadPerformance {
     }
 
     private static void performTasks(){
-        try(ExecutorService executorService = Executors.newFixedThreadPool(1000)){
+        try(ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor()){
             for (int i = 0; i < NUMBER_OF_TASKS; i++) {
                 executorService.submit(VirtualThreadPerformance::blockingIOOperation);
             }
